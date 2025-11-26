@@ -1,8 +1,24 @@
 import React, { useState } from "react";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
+import SliderContent from "./SliderContent";
 
 const images = ["/SliderImg/Slider-1.jpg", "/SliderImg/Slider-1.jpg"];
+
+const slideContents = [
+  {
+    title: "NEW COLLECTION",
+    subtitle: "SUMMER 2020",
+    text: "We know how large objects will act,\n but things on a small scale.",
+    buttonText: "SHOP NOW",
+  },
+  {
+    title: "NEW COLLECTION",
+    subtitle: "BEST SUMMER",
+    text: "We know how large objects will act,\n but things on a small scale.",
+    buttonText: "DISCOVER",
+  },
+];
 
 export default function Slider() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -30,6 +46,8 @@ export default function Slider() {
               alt={`Slide ${idx + 1}`}
               className="w-full h-full object-cover"
             />
+
+            <SliderContent {...slideContents[idx]} />
           </div>
         ))}
       </div>
