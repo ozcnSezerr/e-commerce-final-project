@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
+import SliderArrows from "./SliderArrows";
 import SliderContent from "./SliderContent";
+import SliderProgress from "./SliderProgress";
 
 const images = ["/SliderImg/Slider-1.jpg", "/SliderImg/Slider-1.jpg"];
 
@@ -32,6 +34,8 @@ export default function Slider() {
     },
   });
 
+  const progress = ((currentSlide + 1) / images.length) * 100;
+
   return (
     <div className="relative w-full h-220 md:h-190 overflow-hidden">
       {/* Slider Images */}
@@ -51,6 +55,9 @@ export default function Slider() {
           </div>
         ))}
       </div>
+
+      <SliderArrows instanceRef={instanceRef} />
+      <SliderProgress progress={progress} />
     </div>
   );
 }
