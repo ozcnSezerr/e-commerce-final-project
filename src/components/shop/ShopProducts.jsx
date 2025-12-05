@@ -1,5 +1,6 @@
 import ShopPagination from "./ShopPagination";
 import ShopProductCard from "./ShopProductCard";
+import ShopBrands from "./ShopBrands";
 
 export default function ShopProducts() {
   const products = [
@@ -33,6 +34,10 @@ export default function ShopProducts() {
         </div>
       </div>
       <ShopPagination />
+
+      <div className="mt-16 bg-[#FAFAFA] -mx-10 px-10">
+        <ShopBrands />
+      </div>
     </section>
   );
 }
