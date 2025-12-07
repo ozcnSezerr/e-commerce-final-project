@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 export default function ProductCard({ product }) {
   return (
-    <div className="flex flex-col w-full h-full">
+    <Link to="/product" className="flex flex-col w-full h-full">
       <div className="h-120 w-full">
         <img
           src={product.image}
@@ -26,6 +28,6 @@ export default function ProductCard({ product }) {
           <div className="w-4 h-4 rounded-full bg-[#252B42]"></div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
