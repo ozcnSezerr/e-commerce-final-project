@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 const ProductDescription = () => {
   return (
     <section className="w-full bg-white py-12">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         {/* Description Menu */}
         <div className="flex justify-center gap-8 mb-12 border-b border-[#ECECEC] pb-6">
           <span className="text-gray-500 font-bold">Description</span>
