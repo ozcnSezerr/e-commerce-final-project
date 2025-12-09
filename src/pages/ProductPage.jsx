@@ -1,4 +1,5 @@
 import ProductBreadCrumb from "../components/ProductDetail/ProductBreadCrumb";
+import ProductDescription from "../components/ProductDetail/ProductDescription";
 import Productİnfo from "../components/ProductDetail/Productİnfo";
 
 export default function ProductPage() {
@@ -6,6 +7,7 @@ export default function ProductPage() {
     <>
       <ProductBreadCrumb />
       <Productİnfo />
+      <ProductDescription />
     </>
   );
 }
