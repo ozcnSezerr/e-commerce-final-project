@@ -68,12 +68,9 @@ export default function Navbar() {
         {/* menu for desktop */}
         <ul className="hidden md:flex flex-row text-center items-center text-gray-500 mr-18 font-semibold">
           <li>
-            <a
-              href="/home"
-              className="px-2 py-2 inline-block hover:text-gray-500"
-            >
+            <Link to="/" className="px-2 py-2 inline-block hover:text-gray-500">
               Home
-            </a>
+            </Link>
           </li>
 
           {/* dropdown part */}
@@ -158,12 +155,12 @@ export default function Navbar() {
             </a>
           </li>
           <li>
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="px-2 py-2 inline-block hover:text-gray-500"
             >
               Contact
-            </a>
+            </Link>
           </li>
           <li>
             <a
