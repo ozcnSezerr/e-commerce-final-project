@@ -147,12 +147,12 @@ export default function Navbar() {
             </a>
           </li>
           <li>
-            <a
-              href="/blog"
+            <Link
+              to="/team"
               className="px-2 py-2 inline-block hover:text-gray-500"
             >
               Blog
-            </a>
+            </Link>
           </li>
           <li>
             <Link
