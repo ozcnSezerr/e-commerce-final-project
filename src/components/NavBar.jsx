@@ -139,12 +139,12 @@ export default function Navbar() {
           </li>
 
           <li>
-            <a
-              href="/about"
+            <Link
+              to="/about"
               className="px-2 py-2 inline-block hover:text-gray-500"
             >
               About
-            </a>
+            </Link>
           </li>
           <li>
             <Link
