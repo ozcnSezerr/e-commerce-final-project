@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import md5 from "md5";
 import {
   UserRound,
   Search,
@@ -12,6 +14,15 @@ import {
 
 export default function Navbar() {
   const [shopHover, setShopHover] = useState(false);
+
+  const user = useSelector((store) => store.client.user);
+  const isLoggedIn = user && user.email;
+
+  let gravatarUrl = "";
+  if (isLoggedIn) {
+    const emailHash = md5(user.email.trim().toLowerCase());
+    gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=mp`;
+  }
 
   return (
     <nav className="text-black p-4 w-full md:px-8">
@@ -116,7 +127,6 @@ export default function Navbar() {
               <a href="/cat6" className="px-4 py-2 rounded">
                 Belts
               </a>
-
               <a href="/cat7" className="px-4 py-2 rounded">
                 Cosmetics
               </a>
@@ -173,11 +183,33 @@ export default function Navbar() {
         </ul>
 
         {/* icons for desktop */}
-        <div className="hidden md:flex space-x-8 text-[#23A6F0]">
-          <div className="flex items-center space-x-1">
-            <UserRound className="w-6 h-6 lg:w-4 lg:h-5" />
-            <p className="hidden lg:flex">Login / Register</p>
-          </div>
+        <div className="hidden md:flex items-center space-x-8 text-[#23A6F0]">
+          {isLoggedIn ? (
+            // GİRİŞ YAPILMIŞSA: Gravatar + İsim
+            <div className="flex items-center gap-2 cursor-pointer">
+              <img
+                src={gravatarUrl}
+                alt={user.name}
+                className="w-8 h-8 rounded-full border border-gray-300 object-cover"
+              />
+              <p className="hidden lg:block font-medium">{user.name}</p>
+            </div>
+          ) : (
+            // GİRİŞ YAPILMAMIŞSA: Login / Register Linkleri
+            <div className="flex items-center space-x-1">
+              <UserRound className="w-6 h-6 lg:w-4 lg:h-5" />
+              <div className="hidden lg:flex gap-1 font-bold text-sm">
+                <Link to="/login" className="hover:underline">
+                  Login
+                </Link>
+                <span>/</span>
+                <Link to="/signup" className="hover:underline">
+                  Register
+                </Link>
+              </div>
+            </div>
+          )}
+
           <Search />
           <ShoppingCart />
           <Heart />
