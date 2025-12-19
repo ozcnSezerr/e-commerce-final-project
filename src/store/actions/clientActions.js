@@ -17,7 +17,6 @@ export const fetchRoles = () => (dispatch, getState) => {
   const { client } = getState();
 
   if (client.roles && client.roles.length > 0) {
-    console.log("Roller zaten yüklü, API isteği atılmadı.");
     return;
   }
 
@@ -42,6 +41,8 @@ export const loginUser = (formData, history) => (dispatch) => {
         localStorage.setItem("token", res.data.token);
       }
 
+      axiosInstance.defaults.headers.common["Authorization"] = res.data.token;
+
       toast.success("Giriş Başarılı, Yönlendiriliyorsunuz...");
 
       history.push("/");
@@ -50,4 +51,39 @@ export const loginUser = (formData, history) => (dispatch) => {
       console.error("Login Hatası:", err);
       toast.error(err.response?.data?.message || "Giriş başarısız.");
     });
+};
+
+//Auto-Login
+export const verifyToken = () => (dispatch) => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    axiosInstance.defaults.headers.common["Authorization"] = token;
+
+    axiosInstance
+      .get("/verify")
+      .then((res) => {
+        dispatch(setUser(res.data));
+
+        const newToken = res.data.token;
+        localStorage.setItem("token", newToken);
+        axiosInstance.defaults.headers.common["Authorization"] = newToken;
+
+        console.log("Auto-login başarılı, token yenilendi.");
+      })
+      .catch((err) => {
+        console.error("Token geçersiz, çıkış yapılıyor...", err);
+        localStorage.removeItem("token");
+        delete axiosInstance.defaults.headers.common["Authorization"];
+        dispatch(setUser({}));
+      });
+  }
+};
+
+// logout
+export const logoutUser = () => (dispatch) => {
+  dispatch(setUser({}));
+  localStorage.removeItem("token");
+  delete axiosInstance.defaults.headers.common["Authorization"];
+  toast.info("Başarıyla çıkış yapıldı.");
 };

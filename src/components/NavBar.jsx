@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link } from "react-router-dom"; // Link importu önemli
+import { useSelector, useDispatch } from "react-redux";
 import md5 from "md5";
 import {
   UserRound,
@@ -10,12 +10,17 @@ import {
   Heart,
   ChevronDown,
   ChevronUp,
+  LogOut,
 } from "lucide-react";
+
+import { logoutUser } from "../store/actions/clientActions";
 
 export default function Navbar() {
   const [shopHover, setShopHover] = useState(false);
 
   const user = useSelector((store) => store.client.user);
+  const dispatch = useDispatch();
+
   const isLoggedIn = user && user.email;
 
   let gravatarUrl = "";
@@ -24,59 +29,91 @@ export default function Navbar() {
     gravatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=mp`;
   }
 
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
+
   return (
     <nav className="text-black p-4 w-full md:px-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full">
-        {/* icons for mobile*/}
+        {/* --- mobile header */}
         <div className="flex items-center justify-between md:hidden w-full mb-4">
-          <h1 className="text-2xl font-bold">Bandage</h1>
-          <div className="flex space-x-6">
-            <UserRound />
-            <Search />
-            <ShoppingCart />
-            <TextAlignEnd />
+          <Link to="/" className="text-2xl font-bold">
+            Bandage
+          </Link>
+
+          <div className="flex items-center gap-4">
+            {isLoggedIn ? (
+              <img
+                src={gravatarUrl}
+                alt="user"
+                className="w-6 h-6 rounded-full object-cover border border-gray-300"
+              />
+            ) : (
+              <Link to="/login" className="text-black">
+                <UserRound className="w-6 h-6" />
+              </Link>
+            )}
+
+            <Search className="w-6 h-6" />
+            <ShoppingCart className="w-6 h-6" />
+            <TextAlignEnd className="w-6 h-6 cursor-pointer" />
           </div>
         </div>
 
-        <h1 className="hidden md:block text-2xl font-bold">Bandage</h1>
+        <Link to="/" className="hidden md:block text-2xl font-bold">
+          Bandage
+        </Link>
 
-        {/* menu for mobile */}
-        <ul className="flex flex-col md:hidden gap-y-2 text-center w-full">
+        {/* --- MOBILE MENU LIST --- */}
+        <ul className="flex flex-col md:hidden gap-y-4 text-center w-full text-xl text-gray-500 font-medium py-4">
           <li>
-            <a
-              href="/home"
-              className="px-4 py-2 inline-block hover:text-gray-500"
-            >
+            <Link to="/" className="hover:text-black">
               Home
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/product"
-              className="px-4 py-2 inline-block hover:text-gray-500"
-            >
+            <Link to="/product" className="hover:text-black">
               Product
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/pricing"
-              className="px-4 py-2 inline-block hover:text-gray-500"
-            >
-              Pricing
-            </a>
+            <Link to="/team" className="hover:text-black">
+              Team
+            </Link>
           </li>
           <li>
-            <a
-              href="/contact"
-              className="px-4 py-2 inline-block hover:text-gray-500"
-            >
+            <Link to="/contact" className="hover:text-black">
               Contact
-            </a>
+            </Link>
           </li>
+
+          {isLoggedIn ? (
+            // mobile logout
+            <li className="flex justify-center border-t border-gray-200 pt-4">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-red-600 hover:text-red-800 font-bold"
+              >
+                <LogOut size={20} />
+                Log Out
+              </button>
+            </li>
+          ) : (
+            // mobile Login / Register
+            <li className="text-[#23A6F0] font-bold mt-2 text-2xl">
+              <Link to="/login" className="mr-2">
+                Login
+              </Link>
+              /
+              <Link to="/signup" className="ml-2">
+                Register
+              </Link>
+            </li>
+          )}
         </ul>
 
-        {/* menu for desktop */}
+        {/* --- DESKTOP MENU --- */}
         <ul className="hidden md:flex flex-row text-center items-center text-gray-500 mr-18 font-semibold">
           <li>
             <Link to="/" className="px-2 py-2 inline-block hover:text-gray-500">
@@ -84,7 +121,7 @@ export default function Navbar() {
             </Link>
           </li>
 
-          {/* dropdown part */}
+          {/* SHOP DROPDOWN */}
           <li
             className="relative"
             onMouseEnter={() => setShopHover(true)}
@@ -108,43 +145,83 @@ export default function Navbar() {
                 ${shopHover ? "opacity-100 visible" : "opacity-0 invisible"}
               `}
             >
-              {/* 2 x 6 */}
-              <a href="/cat1" className="px-4 py-4 rounded font-bold">
+              <Link
+                to="/shop/kadin"
+                className="px-4 py-4 rounded font-bold hover:bg-gray-50"
+              >
                 Kadın
-              </a>
-              <a href="/cat2" className="px-4 py-4 rounded font-bold">
+              </Link>
+              <Link
+                to="/shop/erkek"
+                className="px-4 py-4 rounded font-bold hover:bg-gray-50"
+              >
                 Erkek
-              </a>
-              <a href="/cat3" className="px-4 py-2 rounded">
+              </Link>
+
+              <Link
+                to="/shop/bags"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Bags
-              </a>
-              <a href="/cat4" className="px-4 py-2 rounded">
+              </Link>
+              <Link
+                to="/shop/bags"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Bags
-              </a>
-              <a href="/cat5" className="px-4 py-2 rounded">
+              </Link>
+
+              <Link
+                to="/shop/belts"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Belts
-              </a>
-              <a href="/cat6" className="px-4 py-2 rounded">
+              </Link>
+              <Link
+                to="/shop/belts"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Belts
-              </a>
-              <a href="/cat7" className="px-4 py-2 rounded">
+              </Link>
+
+              <Link
+                to="/shop/cosmetics"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Cosmetics
-              </a>
-              <a href="/cat8" className="px-4 py-2 rounded">
+              </Link>
+              <Link
+                to="/shop/cosmetics"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Cosmetics
-              </a>
-              <a href="/cat9" className="px-4 py-2 rounded">
+              </Link>
+
+              <Link
+                to="/shop/bags"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Bags
-              </a>
-              <a href="/cat10" className="px-4 py-2 rounded">
+              </Link>
+              <Link
+                to="/shop/bags"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Bags
-              </a>
-              <a href="/cat11" className="px-4 py-2 rounded">
+              </Link>
+
+              <Link
+                to="/shop/hats"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Hats
-              </a>
-              <a href="/cat12" className="px-4 py-2 rounded">
+              </Link>
+              <Link
+                to="/shop/hats"
+                className="px-4 py-2 rounded hover:bg-gray-50"
+              >
                 Hats
-              </a>
+              </Link>
             </div>
           </li>
 
@@ -173,29 +250,39 @@ export default function Navbar() {
             </Link>
           </li>
           <li>
-            <a
-              href="/pages"
+            <Link
+              to="/pages"
               className="px-2 py-2 inline-block hover:text-gray-500"
             >
               Pages
-            </a>
+            </Link>
           </li>
         </ul>
 
-        {/* icons for desktop */}
+        {/* --- DESKTOP ICONS --- */}
         <div className="hidden md:flex items-center space-x-8 text-[#23A6F0]">
           {isLoggedIn ? (
-            // GİRİŞ YAPILMIŞSA: Gravatar + İsim
-            <div className="flex items-center gap-2 cursor-pointer">
+            // Logout and profile
+            <div className="flex items-center gap-2">
               <img
                 src={gravatarUrl}
                 alt={user.name}
                 className="w-8 h-8 rounded-full border border-gray-300 object-cover"
               />
-              <p className="hidden lg:block font-medium">{user.name}</p>
+              <p className="hidden lg:block font-medium text-gray-700">
+                {user.name}
+              </p>
+
+              <button
+                onClick={handleLogout}
+                className="ml-1 p-1 rounded-md text-gray-500 hover:text-red-600 hover:bg-gray-100 transition-colors"
+                title="Log Out"
+              >
+                <LogOut size={18} />
+              </button>
             </div>
           ) : (
-            // GİRİŞ YAPILMAMIŞSA: Login / Register Linkleri
+            // Login and register
             <div className="flex items-center space-x-1">
               <UserRound className="w-6 h-6 lg:w-4 lg:h-5" />
               <div className="hidden lg:flex gap-1 font-bold text-sm">
