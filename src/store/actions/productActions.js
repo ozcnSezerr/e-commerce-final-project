@@ -1,3 +1,5 @@
+import { axiosInstance } from "../../api/axiosInstance";
+
 export const SET_CATEGORIES = "SET_CATEGORIES";
 export const SET_PRODUCT_LIST = "SET_PRODUCT_LIST";
 export const SET_TOTAL = "SET_TOTAL";
@@ -22,3 +24,35 @@ export const setFetchState = (fetchState) => ({
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
+
+export const fetchCategories = () => (dispatch) => {
+  axiosInstance
+    .get("/categories")
+    .then((res) => dispatch(setCategories(res.data)))
+    .catch((err) => console.error("Kategoriler hatası:", err));
+};
+
+export const fetchProducts = () => (dispatch, getState) => {
+  const { limit, offset } = getState().product;
+
+  dispatch(setFetchState("FETCHING"));
+
+  axiosInstance
+    .get("/products", {
+      params: {
+        limit: limit,
+        offset: offset,
+      },
+    })
+    .then((res) => {
+      dispatch(setProductList(res.data.products));
+
+      dispatch(setTotal(res.data.total));
+
+      dispatch(setFetchState("FETCHED"));
+    })
+    .catch((err) => {
+      console.error("Ürünler yüklenirken hata:", err);
+      dispatch(setFetchState("FAILED"));
+    });
+};

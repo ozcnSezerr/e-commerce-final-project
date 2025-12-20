@@ -1,46 +1,21 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import ShopBoxs from "./ShopBoxs";
 
-const categories = [
-  {
-    id: 1,
-    title: "clothes",
-    image: "ShopCategory/category-1.jpg",
-    text: "5 Items",
-  },
-  {
-    id: 2,
-    title: "clothes",
-    image: "ShopCategory/category-2.jpg",
-    text: "5 Items",
-  },
-  {
-    id: 3,
-    title: "clothes",
-    image: "ShopCategory/category-3.jpg",
-    text: "5 Items",
-  },
-  {
-    id: 4,
-    title: "clothes",
-    image: "ShopCategory/category-4.jpg",
-    text: "5 Items",
-  },
-  {
-    id: 5,
-    title: "clothes",
-    image: "ShopCategory/category-5.jpg",
-    text: "5 Items",
-  },
-];
-
 export default function ShopCategories() {
+  // redux kategoriler
+  const categories = useSelector((store) => store.product.categories);
+
+  const topCategories = [...categories]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 5);
+
   return (
-    <section className="py-8">
-      <div className="flex flex-wrap justify-center gap-4 max-w-7xl mx-auto">
-        {categories.map(({ id, title, image, text }) => {
-          return <ShopBoxs title={title} key={id} image={image} text={text} />;
-        })}
+    <section className="py-12 bg-[#FAFAFA]">
+      <div className="flex flex-wrap justify-center gap-4 max-w-7xl mx-auto px-4">
+        {topCategories.map((item) => (
+          <ShopBoxs key={item.id} item={item} />
+        ))}
       </div>
     </section>
   );
