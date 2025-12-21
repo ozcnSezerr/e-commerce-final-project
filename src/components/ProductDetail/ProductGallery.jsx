@@ -1,39 +1,54 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function ProductGallery() {
-  const images = [
-    { id: 2, src: "/Gallery/gallery-2.jpg", alt: "Ürün2" },
-    { id: 1, src: "/Gallery/gallery-1.jpg", alt: "Ürün1" },
-  ];
+export default function ProductGallery({ images }) {
+  const [activeImage, setActiveImage] = useState(null);
 
-  const [activeImage, setActiveImage] = useState(images[1]);
+  useEffect(() => {
+    if (images && images.length > 0) {
+      // İndex sırasına göre sıralama
+      const sorted = [...images].sort((a, b) => a.index - b.index);
+      setActiveImage(sorted[0]);
+    }
+  }, [images]);
+
+  if (!images || images.length === 0 || !activeImage) {
+    return (
+      <div className="flex-1 flex justify-center items-center h-[400px]">
+        Loading Images...
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-12 md:scale-90 lg:scale-100 ">
-      {/* ---image-1-- */}
-      <div className="w-90 h-[280px] md:h-110 md:w-125 relative overflow-hidden max-w-3xl mx-16 md:mx-6">
+    <div className="flex flex-col gap-4 flex-1">
+      {/* BÜYÜK RESİM */}
+      <div className="relative w-full h-[300px] md:h-[500px] overflow-hidden rounded-lg shadow-sm">
         <img
-          src={activeImage.src}
-          alt={activeImage.alt}
-          className="w-full h-full object-cover object-center transition-all duration-500 ease-in-out transform hover:scale-102"
+          src={activeImage.url}
+          alt="Active Product"
+          className="w-full h-full object-cover object-top transition-all duration-500 hover:scale-110"
         />
       </div>
 
-      {/* ---images-2--- */}
-      <div className="flex gap-4 overflow-x-auto pb-2 mx-16 md:mx-6">
-        {images.map((image) => (
+      {/* KÜÇÜK RESİMLER */}
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {images.map((image, i) => (
           <div
-            key={image.id}
+            key={i}
             onClick={() => setActiveImage(image)}
             className={`
-              relative w-24 h-20 md:w-32 md:h-24 shrink-0 cursor-pointer overflow-hidden 
-              border-none transition-all duration-200 
-              ${activeImage.id === image.id ? "opacity-100" : "opacity-60"}
+              relative w-24 h-24 shrink-0 cursor-pointer overflow-hidden rounded-md border-2
+              transition-all duration-200 
+              ${
+                activeImage.url === image.url
+                  ? "border-[#23A6F0] opacity-100"
+                  : "border-transparent opacity-60 hover:opacity-100"
+              }
             `}
           >
             <img
-              src={image.src}
-              alt={image.alt}
+              src={image.url}
+              alt={`thumbnail-${i}`}
               className="w-full h-full object-cover object-center"
             />
           </div>

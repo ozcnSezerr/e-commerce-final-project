@@ -126,7 +126,7 @@ export default function Navbar() {
             </Link>
           </li>
 
-          {/* Dropdown */}
+          {/* DROPDOWN */}
           <li
             className="relative"
             onMouseEnter={() => setShopHover(true)}

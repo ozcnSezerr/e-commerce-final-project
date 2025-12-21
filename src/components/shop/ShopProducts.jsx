@@ -15,25 +15,27 @@ const LoadingSpinner = () => (
 export default function ShopProducts() {
   const dispatch = useDispatch();
 
-  const { productList, fetchState, limit, offset } = useSelector(
-    (store) => store.product
-  );
+  const { productList, fetchState, limit, offset, category, filter, sort } =
+    useSelector((store) => store.product);
 
   useEffect(() => {
     dispatch(setLimit(24));
 
     dispatch(fetchProducts());
-  }, [dispatch, limit, offset]);
+  }, [dispatch, limit, offset, category, filter, sort]);
 
   return (
     <section className="p-4 md:p-10 w-full h-full mt-6">
       <div className="max-w-7xl mx-auto">
+        {/* --- YÜKLENİYOR --- */}
         {fetchState === "FETCHING" && <LoadingSpinner />}
 
+        {/* --- HATA --- */}
         {fetchState === "FAILED" && (
           <div className="text-center text-red-500 py-20">Veri çekilemedi.</div>
         )}
 
+        {/* --- VERİ GELDİ --- */}
         {fetchState === "FETCHED" && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
@@ -44,8 +46,8 @@ export default function ShopProducts() {
                   </div>
                 ))
               ) : (
-                <div className="w-full col-span-4 text-center py-10">
-                  Bu sayfada ürün yok.
+                <div className="w-full col-span-4 text-center py-20 text-gray-500 font-medium">
+                  Aradığınız kriterlere uygun ürün bulunamadı.
                 </div>
               )}
             </div>

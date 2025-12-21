@@ -7,6 +7,10 @@ export const SET_FETCH_STATE = "SET_FETCH_STATE";
 export const SET_LIMIT = "SET_LIMIT";
 export const SET_OFFSET = "SET_OFFSET";
 export const SET_FILTER = "SET_FILTER";
+export const SET_CATEGORY = "SET_CATEGORY";
+export const SET_SORT = "SET_SORT";
+
+export const SET_CURRENT_PRODUCT = "SET_CURRENT_PRODUCT";
 
 export const setCategories = (categories) => ({
   type: SET_CATEGORIES,
@@ -24,6 +28,16 @@ export const setFetchState = (fetchState) => ({
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
+export const setCategory = (categoryId) => ({
+  type: SET_CATEGORY,
+  payload: categoryId,
+});
+export const setSort = (sort) => ({ type: SET_SORT, payload: sort });
+
+export const setCurrentProduct = (product) => ({
+  type: SET_CURRENT_PRODUCT,
+  payload: product,
+});
 
 export const fetchCategories = () => (dispatch) => {
   axiosInstance
@@ -33,26 +47,40 @@ export const fetchCategories = () => (dispatch) => {
 };
 
 export const fetchProducts = () => (dispatch, getState) => {
-  const { limit, offset } = getState().product;
-
+  const { limit, offset, category, filter, sort } = getState().product;
   dispatch(setFetchState("FETCHING"));
 
+  const params = { limit, offset };
+  if (category) params.category = category;
+  if (filter) params.filter = filter;
+  if (sort) params.sort = sort;
+
   axiosInstance
-    .get("/products", {
-      params: {
-        limit: limit,
-        offset: offset,
-      },
-    })
+    .get("/products", { params })
     .then((res) => {
       dispatch(setProductList(res.data.products));
-
       dispatch(setTotal(res.data.total));
-
       dispatch(setFetchState("FETCHED"));
     })
     .catch((err) => {
-      console.error("Ürünler yüklenirken hata:", err);
+      console.error("Hata:", err);
+      dispatch(setFetchState("FAILED"));
+    });
+};
+
+// --- product detail ---
+export const fetchProduct = (productId) => (dispatch) => {
+  dispatch(setFetchState("FETCHING"));
+  dispatch(setCurrentProduct({}));
+
+  axiosInstance
+    .get(`/products/${productId}`)
+    .then((res) => {
+      dispatch(setCurrentProduct(res.data));
+      dispatch(setFetchState("FETCHED"));
+    })
+    .catch((err) => {
+      console.error("Ürün detay hatası:", err);
       dispatch(setFetchState("FAILED"));
     });
 };
