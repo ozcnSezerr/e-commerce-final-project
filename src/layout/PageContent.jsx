@@ -8,7 +8,7 @@ import TeamPage from "../pages/TeamPage";
 import AboutPage from "../pages/AboutPage";
 import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
-
+import CartPage from "../pages/CartPage";
 export default function PageContent() {
   return (
     <Switch>
@@ -44,6 +44,9 @@ export default function PageContent() {
       </Route>
       <Route path="/login">
         <Login />
+      </Route>
+      <Route path="/cart">
+        <CartPage />
       </Route>
     </Switch>
   );

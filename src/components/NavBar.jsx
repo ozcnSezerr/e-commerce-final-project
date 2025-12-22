@@ -6,11 +6,12 @@ import {
   UserRound,
   Search,
   ShoppingCart,
-  TextAlignEnd,
   Heart,
   ChevronDown,
   ChevronUp,
   LogOut,
+  TextAlignEnd,
+  Trash2,
 } from "lucide-react";
 
 import { logoutUser } from "../store/actions/clientActions";
@@ -18,19 +19,20 @@ import { fetchCategories } from "../store/actions/productActions";
 
 export default function Navbar() {
   const [shopHover, setShopHover] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false); 
 
   const user = useSelector((store) => store.client.user);
   const categories = useSelector((store) => store.product.categories);
+  const cart = useSelector((store) => store.shoppingCart.cart);
   const dispatch = useDispatch();
 
   const isLoggedIn = user && user.email;
 
-  // kategorileri getirme
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  // --- kategorileri ayrıştırma ---
+  // Kategorileri ayrıştırma
   const womenCategories = categories.filter((cat) => cat.code.startsWith("k:"));
   const menCategories = categories.filter((cat) => cat.code.startsWith("e:"));
 
@@ -44,8 +46,11 @@ export default function Navbar() {
     dispatch(logoutUser());
   };
 
+  
+  const totalCartItems = cart.reduce((total, item) => total + item.count, 0);
+
   return (
-    <nav className="text-black p-4 w-full md:px-8">
+    <nav className="text-black p-4 w-full md:px-8 relative z-50">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full">
         {/* --- MOBILE HEADER --- */}
         <div className="flex items-center justify-between md:hidden w-full mb-4">
@@ -65,16 +70,24 @@ export default function Navbar() {
               </Link>
             )}
             <Search className="w-6 h-6" />
-            <ShoppingCart className="w-6 h-6" />
+            <Link to="/cart" className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#23A6F0] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {totalCartItems}
+                </span>
+              )}
+            </Link>
             <TextAlignEnd className="w-6 h-6 cursor-pointer" />
           </div>
         </div>
 
+        {/* --- DESKTOP LOGO --- */}
         <Link to="/" className="hidden md:block text-2xl font-bold">
           Bandage
         </Link>
 
-        {/* --- MOBILE MENU --- */}
+        {/* --- MOBILE MENU LIST --- */}
         <ul className="flex flex-col md:hidden gap-y-4 text-center w-full text-xl text-gray-500 font-medium py-4">
           <li>
             <Link to="/" className="hover:text-black">
@@ -118,7 +131,7 @@ export default function Navbar() {
           )}
         </ul>
 
-        {/* --- DESKTOP MENU --- */}
+        {/* --- DESKTOP MENU LIST --- */}
         <ul className="hidden md:flex flex-row text-center items-center text-gray-500 mr-18 font-semibold">
           <li>
             <Link to="/" className="px-2 py-2 inline-block hover:text-gray-500">
@@ -126,7 +139,7 @@ export default function Navbar() {
             </Link>
           </li>
 
-          {/* DROPDOWN */}
+          {/* SHOP DROPDOWN */}
           <li
             className="relative"
             onMouseEnter={() => setShopHover(true)}
@@ -217,8 +230,8 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* --- ICONS --- */}
-        <div className="hidden md:flex items-center space-x-8 text-[#23A6F0]">
+        {/* --- DESKTOP ICONS & ACTIONS --- */}
+        <div className="hidden md:flex items-center space-x-6 text-[#23A6F0]">
           {isLoggedIn ? (
             <div className="flex items-center gap-2">
               <img
@@ -251,9 +264,89 @@ export default function Navbar() {
               </div>
             </div>
           )}
-          <Search />
-          <ShoppingCart />
-          <Heart />
+
+          <Search className="w-5 h-5 cursor-pointer" />
+
+          {/* --- shopping cart dropdown*/}
+          <div className="relative group">
+            <button
+              className="flex items-center relative py-2"
+              onClick={() => setCartOpen(!cartOpen)}
+            >
+              <ShoppingCart className="w-5 h-5 cursor-pointer" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-2 bg-[#23A6F0] text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {totalCartItems}
+                </span>
+              )}
+            </button>
+
+            {/* sepet */}
+            <div className="absolute right-0 top-full mt-0 w-80 bg-white shadow-xl border border-gray-200 rounded-lg z-50 hidden group-hover:block transition-all duration-300">
+              <div className="p-4">
+                <h3 className="font-bold text-lg mb-3 border-b pb-2 text-[#252B42]">
+                  Sepetim ({totalCartItems} Ürün)
+                </h3>
+
+                <div className="max-h-60 overflow-y-auto flex flex-col gap-3 custom-scrollbar">
+                  {cart.length === 0 ? (
+                    <div className="py-4 text-center text-gray-500 text-sm flex flex-col items-center">
+                      <ShoppingCart size={32} className="text-gray-300 mb-2" />
+                      <p>Sepetiniz boş.</p>
+                    </div>
+                  ) : (
+                    cart.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex gap-3 items-center justify-between border-b border-gray-100 pb-2 last:border-0"
+                      >
+                        <img
+                          src={item.product.images?.[0]?.url}
+                          alt={item.product.name}
+                          className="w-12 h-16 object-cover rounded border border-gray-100"
+                        />
+                        <div className="flex-1 flex flex-col">
+                          <span
+                            className="text-sm font-bold text-[#252B42] line-clamp-1"
+                            title={item.product.name}
+                          >
+                            {item.product.name}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            Adet: {item.count}
+                          </span>
+                          <span className="text-[#23A6F0] font-bold text-sm">
+                            ${(item.product.price * item.count).toFixed(2)}
+                          </span>
+                        </div>
+                        <button className="text-gray-300 hover:text-red-500">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <div className="flex gap-2 mt-4">
+                  <Link
+                    to="/cart"
+                    className="flex-1 border border-gray-300 text-center py-2 rounded text-sm font-bold text-[#252B42] hover:bg-gray-50 transition-colors flex items-center justify-center"
+                  >
+                    Sepete Git
+                  </Link>
+                  <Link
+                    to="/cart"
+                    className="flex-1 bg-[#F27A1A] text-white text-center py-2 rounded text-sm font-bold hover:bg-orange-600 transition-colors flex items-center justify-center"
+                  >
+                    Siparişi Tamamla
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* ----------------------------------------------- */}
+
+          <Heart className="w-5 h-5 cursor-pointer" />
         </div>
       </div>
     </nav>

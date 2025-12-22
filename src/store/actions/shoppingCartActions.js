@@ -1,13 +1,15 @@
-export const SET_CART = "SET_CART";
-export const SET_PAYMENT = "SET_PAYMENT";
-export const SET_ADDRESS = "SET_ADDRESS";
+export const addToCart = (product) => {
+  return { type: "ADD_TO_CART", payload: product };
+};
 
-export const setCart = (cart) => ({ type: SET_CART, payload: cart });
-export const setPayment = (payment) => ({
-  type: SET_PAYMENT,
-  payload: payment,
-});
-export const setAddress = (address) => ({
-  type: SET_ADDRESS,
-  payload: address,
-});
+export const removeFromCart = (productId) => {
+  return { type: "REMOVE_FROM_CART", payload: productId };
+};
+
+export const updateItemCount = (productId, count) => {
+  return { type: "UPDATE_ITEM_COUNT", payload: { productId, count } };
+};
+
+export const toggleCheckbox = (productId) => {
+  return { type: "TOGGLE_CHECKBOX", payload: productId };
+};

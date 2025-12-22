@@ -1,8 +1,16 @@
 import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/actions/shoppingCartActions";
 
 export default function ProductSideContent({ product }) {
   const [liked, setLiked] = useState(false);
+  const dispatch = useDispatch();
+
+  // Sepete ekleme fonksiyonu
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
 
   if (!product) return null;
 
@@ -55,8 +63,11 @@ export default function ProductSideContent({ product }) {
       {/* ------------------------------------- */}
 
       <div className="flex gap-4 mt-8 flex-wrap">
-        <button className="bg-[#23A6F0] px-8 py-3 text-white font-bold rounded hover:bg-[#1a8bc4] transition">
-          Select Options
+        <button
+          onClick={handleAddToCart}
+          className="bg-[#23A6F0] px-8 py-3 text-white font-bold rounded hover:bg-[#1a8bc4] transition"
+        >
+          Add to Cart
         </button>
 
         <div className="flex gap-2 items-center">
@@ -70,7 +81,10 @@ export default function ProductSideContent({ product }) {
             />
           </button>
 
-          <button className="border p-3 rounded-full hover:bg-gray-50 transition flex items-center justify-center w-10 h-10">
+          <button
+            onClick={handleAddToCart}
+            className="border p-3 rounded-full hover:bg-gray-50 transition flex items-center justify-center w-10 h-10"
+          >
             <ShoppingCart size={20} className="text-[#252B42]" />
           </button>
 
